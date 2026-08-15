@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#000004" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' https://streakappofficial.com; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; connect-src 'none'" />
+  <title>Get Streak</title>
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(ellipse at top, #121826 0%, #000004 55%);
+      color: #e8edf5;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      text-align: center;
+      padding: 24px;
+    }
+    .card { max-width: 420px; width: 100%; }
+    .label {
+      font-size: 10px;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      color: #6b7a94;
+      margin-bottom: 10px;
+    }
+    h1 {
+      font-size: 28px;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      margin: 0 0 12px;
+    }
+    p {
+      color: rgba(232,237,245,0.65);
+      line-height: 1.5;
+      margin: 0 0 28px;
+      font-size: 15px;
+    }
+    .code {
+      display: inline-block;
+      padding: 10px 16px;
+      border-radius: 12px;
+      border: 1px solid rgba(200,216,240,0.25);
+      background: rgba(200,216,240,0.08);
+      font-weight: 800;
+      letter-spacing: 1px;
+      margin-bottom: 22px;
+      color: #c8d8f0;
+    }
+    .cta {
+      display: inline-block;
+      width: 100%;
+      padding: 16px 20px;
+      border-radius: 16px;
+      background: #c8d8f0;
+      color: #04060c;
+      font-weight: 800;
+      text-decoration: none;
+      margin-bottom: 12px;
+    }
+    .secondary {
+      display: inline-block;
+      width: 100%;
+      padding: 14px 20px;
+      border-radius: 16px;
+      border: 1px solid rgba(200,216,240,0.25);
+      color: #c8d8f0;
+      font-weight: 700;
+      text-decoration: none;
+      margin-bottom: 18px;
+    }
+    .hint { font-size: 12px; color: #6b7a94; line-height: 1.45; }
+  </style>
+</head>
+<body>
+  <main class="card">
+    <div class="label">Streak</div>
+    <h1 id="title">Start your recovery</h1>
+    <p id="body">Download Streak and continue on your phone. If asked for a referral code during signup, use the code below.</p>
+    <div class="code" id="codePill" hidden></div>
+    <a class="cta" id="storeBtn" href="https://apps.apple.com/app/id6782550146">Download on the App Store</a>
+    <a class="secondary" id="openAppBtn" href="streak://ref" hidden>Open Streak app</a>
+    <p class="hint" id="hint">This link helps Streak know who referred you so we can credit your creator.</p>
+  </main>
+  <script>
+    (function () {
+      var params = new URLSearchParams(window.location.search);
+      var pathParts = window.location.pathname.split('/').filter(Boolean);
+      var code = (params.get('ref') || params.get('code') || params.get('referral') || '').toLowerCase();
+      if (!code && pathParts.length >= 2 && pathParts[0] === 'r') {
+        code = String(pathParts[1] || '').toLowerCase();
+      }
+      code = code.replace(/[^a-z0-9_-]/g, '').slice(0, 32);
+
+      var store = 'https://apps.apple.com/app/id6782550146';
+      if (code) {
+        try { localStorage.setItem('streak_ref', code); } catch (e) {}
+        store += '?pt=6782550146&ct=' + encodeURIComponent(code);
+        document.getElementById('codePill').hidden = false;
+        document.getElementById('codePill').textContent = code.toUpperCase();
+        document.getElementById('title').textContent = 'You were referred to Streak';
+        document.getElementById('body').textContent =
+          'Download the app, create your account, and enter this referral code if the app asks for it. Your creator will get credit when you subscribe.';
+        document.getElementById('openAppBtn').hidden = false;
+        document.getElementById('openAppBtn').href = 'streak://ref?code=' + encodeURIComponent(code);
+        document.getElementById('hint').textContent =
+          'Shareable link format: https://streakappofficial.com/r/?ref=' + code;
+      }
+      document.getElementById('storeBtn').href = store;
+    })();
+  </script>
+</body>
+</html>

@@ -1,1 +1,5 @@
+﻿/r /r/index.html 200
+/r/ /r/index.html 200
+/auth/confirmed /auth/confirmed/index.html 200
+/auth/confirmed/ /auth/confirmed/index.html 200
 /* /index.html 200
