@@ -1,9 +1,9 @@
-﻿{
+{
   "rewrites": [
     { "source": "/r", "destination": "/r/index.html" },
     { "source": "/r/", "destination": "/r/index.html" },
     { "source": "/auth/confirmed", "destination": "/auth/confirmed/index.html" },
     { "source": "/auth/confirmed/", "destination": "/auth/confirmed/index.html" },
-    { "source": "/((?!r(?:/|$)|auth(?:/|$)).*)", "destination": "/index.html" }
+    { "source": "/(.*)", "destination": "/index.html" }
   ]
 }
