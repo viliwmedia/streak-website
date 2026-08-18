@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000004" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self' https://streakappofficial.com; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; connect-src 'none'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; connect-src 'none'" />
   <title>Get Streak</title>
   <style>
     * { box-sizing: border-box; }
@@ -21,12 +21,11 @@
       padding: 24px;
     }
     .card { max-width: 420px; width: 100%; }
-    .label {
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #6b7a94;
-      margin-bottom: 10px;
+    .logo {
+      width: 148px;
+      height: auto;
+      margin: 0 auto 28px;
+      display: block;
     }
     h1 {
       font-size: 28px;
@@ -78,13 +77,13 @@
 </head>
 <body>
   <main class="card">
-    <div class="label">Streak</div>
+    <img class="logo" src="/streak-logo-white.png" alt="Streak" width="148" height="40" />
     <h1 id="title">Start your recovery</h1>
     <p id="body">Download Streak and continue on your phone. If asked for a referral code during signup, use the code below.</p>
     <div class="code" id="codePill" hidden></div>
     <a class="cta" id="storeBtn" href="https://apps.apple.com/app/id6782550146">Download on the App Store</a>
     <a class="secondary" id="openAppBtn" href="streak://ref" hidden>Open Streak app</a>
-    <p class="hint" id="hint">This link helps Streak know who referred you so we can credit your creator.</p>
+    <p class="hint" id="hint">Open this page on your phone to download Streak.</p>
   </main>
   <script>
     (function () {
@@ -104,11 +103,11 @@
         document.getElementById('codePill').textContent = code.toUpperCase();
         document.getElementById('title').textContent = 'You were referred to Streak';
         document.getElementById('body').textContent =
-          'Download the app, create your account, and enter this referral code if the app asks for it. Your creator will get credit when you subscribe.';
+          'Download the app, create your account, and enter this referral code if the app asks for it.';
         document.getElementById('openAppBtn').hidden = false;
         document.getElementById('openAppBtn').href = 'streak://ref?code=' + encodeURIComponent(code);
         document.getElementById('hint').textContent =
-          'Shareable link format: https://streakappofficial.com/r/?ref=' + code;
+          'Shareable link format: https://streakofficial.com/r/?ref=' + code;
       }
       document.getElementById('storeBtn').href = store;
     })();
