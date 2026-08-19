@@ -4,7 +4,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#000004" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'; connect-src 'none'" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; script-src 'unsafe-inline'; connect-src https://izmxaqcvvwpnvukizbdw.supabase.co; base-uri 'none'; form-action 'none'" />
   <title>Get Streak</title>
   <style>
     * { box-sizing: border-box; }
@@ -39,17 +39,6 @@
       margin: 0 0 28px;
       font-size: 15px;
     }
-    .code {
-      display: inline-block;
-      padding: 10px 16px;
-      border-radius: 12px;
-      border: 1px solid rgba(200,216,240,0.25);
-      background: rgba(200,216,240,0.08);
-      font-weight: 800;
-      letter-spacing: 1px;
-      margin-bottom: 22px;
-      color: #c8d8f0;
-    }
     .cta {
       display: inline-block;
       width: 100%;
@@ -79,14 +68,17 @@
   <main class="card">
     <img class="logo" src="/streak-logo-white.png" alt="Streak" width="148" height="40" />
     <h1 id="title">Start your recovery</h1>
-    <p id="body">Download Streak and continue on your phone. If asked for a referral code during signup, use the code below.</p>
-    <div class="code" id="codePill" hidden></div>
+    <p id="body">Download Streak and continue on your phone.</p>
     <a class="cta" id="storeBtn" href="https://apps.apple.com/app/id6782550146">Download on the App Store</a>
     <a class="secondary" id="openAppBtn" href="streak://ref" hidden>Open Streak app</a>
     <p class="hint" id="hint">Open this page on your phone to download Streak.</p>
   </main>
   <script>
     (function () {
+      var SUPABASE_URL = 'https://izmxaqcvvwpnvukizbdw.supabase.co';
+      var SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml6bXhhcWN2dndwbnZ1a2l6YmR3Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODAzOTA1OTAsImV4cCI6MjA5NTk2NjU5MH0.AhMiKf3WLjBGqREMfrFikaSEn9kfynrWSg84FfBApwI';
+      var STORE = 'https://apps.apple.com/app/id6782550146';
+
       var params = new URLSearchParams(window.location.search);
       var pathParts = window.location.pathname.split('/').filter(Boolean);
       var code = (params.get('ref') || params.get('code') || params.get('referral') || '').toLowerCase();
@@ -95,21 +87,71 @@
       }
       code = code.replace(/[^a-z0-9_-]/g, '').slice(0, 32);
 
-      var store = 'https://apps.apple.com/app/id6782550146';
+      var clickId = null;
+      var deepLink = 'streak://ref';
+
+      function setOpenAppHref() {
+        var btn = document.getElementById('openAppBtn');
+        if (!btn) return;
+        if (clickId && code) {
+          btn.href = 'streak://ref?click=' + encodeURIComponent(clickId) + '&code=' + encodeURIComponent(code);
+          btn.hidden = false;
+        } else if (code) {
+          btn.href = 'streak://ref?code=' + encodeURIComponent(code);
+          btn.hidden = false;
+        }
+      }
+
+      function track(eventName) {
+        if (!code) return Promise.resolve(null);
+        return fetch(SUPABASE_URL + '/functions/v1/track-referral-click', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'apikey': SUPABASE_ANON_KEY,
+            'Authorization': 'Bearer ' + SUPABASE_ANON_KEY,
+          },
+          body: JSON.stringify({
+            code: code,
+            event: eventName || 'view',
+            click_id: clickId || undefined,
+          }),
+        })
+          .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
+          .then(function (res) {
+            if (!res.ok || !res.j || !res.j.click_id) return null;
+            clickId = res.j.click_id;
+            try { localStorage.setItem('streak_ref_click', clickId); } catch (e) {}
+            try { localStorage.setItem('streak_ref', code); } catch (e) {}
+            if (res.j.deep_link) deepLink = res.j.deep_link;
+            setOpenAppHref();
+            return clickId;
+          })
+          .catch(function () { return null; });
+      }
+
+      var storeBtn = document.getElementById('storeBtn');
+      storeBtn.href = STORE;
+
       if (code) {
-        try { localStorage.setItem('streak_ref', code); } catch (e) {}
-        store += '?pt=6782550146&ct=' + encodeURIComponent(code);
-        document.getElementById('codePill').hidden = false;
-        document.getElementById('codePill').textContent = code.toUpperCase();
+        try {
+          var saved = localStorage.getItem('streak_ref_click');
+          if (saved) clickId = saved;
+        } catch (e) {}
+
         document.getElementById('title').textContent = 'You were referred to Streak';
         document.getElementById('body').textContent =
-          'Download the app, create your account, and enter this referral code if the app asks for it.';
-        document.getElementById('openAppBtn').hidden = false;
-        document.getElementById('openAppBtn').href = 'streak://ref?code=' + encodeURIComponent(code);
+          'Download the app and create your account to get started.';
         document.getElementById('hint').textContent =
-          'Shareable link format: https://streakofficial.com/r/?ref=' + code;
+          'Shareable link: https://streakofficial.com/r/?ref=' + code;
+        setOpenAppHref();
+
+        track('view');
+
+        storeBtn.addEventListener('click', function () {
+          track('download');
+        });
       }
-      document.getElementById('storeBtn').href = store;
     })();
   </script>
 </body>
