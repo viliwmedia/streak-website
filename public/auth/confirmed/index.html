@@ -1,90 +1,53 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="theme-color" content="#000004" />
-  <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src 'self'; script-src 'unsafe-inline'; base-uri 'none'; form-action 'none'" />
-  <meta name="referrer" content="no-referrer" />
-  <title>Email confirmed — Streak</title>
-  <style>
-    * { box-sizing: border-box; }
-    body {
-      margin: 0;
-      min-height: 100vh;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000004;
-      color: #e8edf5;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      text-align: center;
-      padding: 24px;
-    }
-    .card { max-width: 420px; width: 100%; }
-    .logo {
-      width: 96px;
-      height: 96px;
-      margin: 0 auto 28px;
-      display: block;
-    }
-    .label {
-      font-size: 10px;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      color: #6b7a94;
-      margin-bottom: 10px;
-    }
-    h1 {
-      font-size: 28px;
-      font-weight: 800;
-      line-height: 1.2;
-      letter-spacing: -0.4px;
-      margin: 0 0 12px;
-    }
-    p {
-      color: #8b95a8;
-      line-height: 1.55;
-      font-size: 15px;
-      margin: 0;
-    }
-    a.btn {
-      display: inline-block;
-      margin-top: 28px;
-      padding: 14px 28px;
-      background: #c8d8f0;
-      color: #000004;
-      border-radius: 12px;
-      text-decoration: none;
-      font-weight: 700;
-      font-size: 15px;
-    }
-    .error h1 { color: #f87171; }
-    .error .label { color: #f87171; opacity: 0.7; }
-  </style>
-</head>
-<body>
-  <div class="card" id="content">
-    <img class="logo" src="/streak-logo-white.png" width="96" height="96" alt="Streak" />
-    <p class="label">All set</p>
-    <h1>Email confirmed</h1>
-    <p>Your account is ready. Open the Streak app and sign in to continue.</p>
-    <a class="btn" href="streak://">Open Streak</a>
-  </div>
-  <script>
-    const params = new URLSearchParams(location.hash.slice(1) || location.search);
-    const error = params.get('error') || params.get('error_code');
-    if (error) {
-      const card = document.getElementById('content');
-      card.className = 'card error';
-      card.innerHTML =
-        '<img class="logo" src="/streak-logo-white.png" width="96" height="96" alt="Streak" />' +
-        '<p class="label">Something went wrong</p>' +
-        '<h1>Link expired</h1>' +
-        '<p>This confirmation link is invalid or has already been used. ' +
-        'Open the Streak app and sign in, or sign up again to get a new link.</p>' +
-        '<a class="btn" href="streak://">Open Streak</a>';
-    }
-  </script>
-</body>
-</html>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Email confirmed — Streak</title>
+<meta name="description" content="Your email address is confirmed. Head back to the Streak app and sign in.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#04060a">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&family=IBM+Plex+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#04060a;
+  --graphite:#0b0f15;
+  --charcoal:#151b23;
+  --silver:#b9c2ce;
+  --white:#f2f5f9;
+  --blue:#58a6ff;
+  --blue-hi:#9ccbff;
+  --green:#3ddc84;
+  --mono:'IBM Plex Mono',ui-monospace,monospace;
+  --sans:'Archivo',system-ui,sans-serif;
+  --ease:cubic-bezier(.22,.9,.24,1);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{min-height:100%}
+body{background:var(--void);color:var(--white);font-family:var(--sans);
+  -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  min-height:100svh;padding:40px 22px;position:relative;overflow-x:hidden}
+::selection{background:var(--blue);color:var(--void)}
+a{color:inherit}
+#field{position:fixed;inset:0;z-index:0;opacity:.5}
+#glow{position:fixed;left:50%;top:38%;width:min(900px,120vw);aspect-ratio:1;
+  transform:translate(-50%,-50%);z-index:0;pointer-events:none;
+  background:radial-gradient(closest-side,rgba(88,166,255,.16),rgba(88,166,255,0) 70%)}
+#grain{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.05;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)'/%3E%3C/svg%3E")}
+main{position:relative;z-index:2;width:100%;max-width:520px;text-align:center;
+  padding:clamp(30px,6vw,46px) clamp(22px,5vw,40px) clamp(26px,5vw,38px);
+  border-radius:26px;
+  background:linear-gradient(180deg,rgba(21,27,35,.82),rgba(11,15,21,.78));
+  border:1px solid rgba(185,194,206,.14);
+  backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  box-shadow:0 50px 90px -50px rgba(0,0,0,.9),inset 0 1px 0 rgba(255,255,255,.05);
+  animation:rise .8s var(--ease) both}
+@keyframes rise{from{opacity:0;transform:translateY(22px);filter:blur(8px)}
+  to{opacity:1;transform:none;filter:blur(0)}}
+.brand{display:flex;align-items:center;justify-content:center;gap:11px;margin-bottom:30px}
+.brand .mark{display:inline-block;width:30px;height:33px;
+  background:center/contain no-repeat url('data:image/png;base64,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
