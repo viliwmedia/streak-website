@@ -1,15 +1,5 @@
 {
    "rewrites": [
-    {
-      "source": "/:path*",
-      "destination": "/email-confirmed.html",
-      "has": [
-        {
-          "type": "host",
-          "value": "confirm.streakofficial.com"
-        }
-      ]
-    },
     { "source": "/r/", "destination": "/index.html" },
     { "source": "/r/*", "destination": "/index.html" },
     { "source": "/auth/confirmed", "destination": "/auth/confirmed/index.html" },
