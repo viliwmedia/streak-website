@@ -1,7 +1,17 @@
 {
-  "rewrites": [
-    { "source": "/r", "destination": "/r/index.html" },
-    { "source": "/r/", "destination": "/r/index.html" },
+   "rewrites": [
+    {
+      "source": "/:path*",
+      "destination": "/email-confirmed.html",
+      "has": [
+        {
+          "type": "host",
+          "value": "confirm.streakofficial.com"
+        }
+      ]
+    },
+    { "source": "/r/", "destination": "/index.html" },
+    { "source": "/r/*", "destination": "/index.html" },
     { "source": "/auth/confirmed", "destination": "/auth/confirmed/index.html" },
     { "source": "/auth/confirmed/", "destination": "/auth/confirmed/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
