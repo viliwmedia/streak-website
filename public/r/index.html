@@ -87,6 +87,9 @@
       }
       code = code.replace(/[^a-z0-9_-]/g, '').slice(0, 32);
 
+      var campaign = (params.get('campaign') || params.get('utm_campaign') || '').toLowerCase();
+      campaign = campaign.replace(/[^a-z0-9_-]/g, '').slice(0, 64);
+
       var clickId = null;
       var deepLink = 'streak://ref';
 
@@ -94,10 +97,12 @@
         var btn = document.getElementById('openAppBtn');
         if (!btn) return;
         if (clickId && code) {
-          btn.href = 'streak://ref?click=' + encodeURIComponent(clickId) + '&code=' + encodeURIComponent(code);
+          btn.href = 'streak://ref?click=' + encodeURIComponent(clickId) + '&code=' + encodeURIComponent(code) +
+            (campaign ? '&campaign=' + encodeURIComponent(campaign) : '');
           btn.hidden = false;
         } else if (code) {
-          btn.href = 'streak://ref?code=' + encodeURIComponent(code);
+          btn.href = 'streak://ref?code=' + encodeURIComponent(code) +
+            (campaign ? '&campaign=' + encodeURIComponent(campaign) : '');
           btn.hidden = false;
         }
       }
@@ -115,6 +120,7 @@
             code: code,
             event: eventName || 'view',
             click_id: clickId || undefined,
+            campaign: campaign || undefined,
           }),
         })
           .then(function (r) { return r.json().then(function (j) { return { ok: r.ok, j: j }; }); })
@@ -123,6 +129,10 @@
             clickId = res.j.click_id;
             try { localStorage.setItem('streak_ref_click', clickId); } catch (e) {}
             try { localStorage.setItem('streak_ref', code); } catch (e) {}
+            if (campaign) {
+              try { localStorage.setItem('streak_ref_campaign', campaign); } catch (e) {}
+            }
+            if (res.j.campaign) campaign = String(res.j.campaign);
             if (res.j.deep_link) deepLink = res.j.deep_link;
             setOpenAppHref();
             return clickId;
@@ -143,7 +153,8 @@
         document.getElementById('body').textContent =
           'Download the app and create your account to get started.';
         document.getElementById('hint').textContent =
-          'Shareable link: https://streakofficial.com/r/?ref=' + code;
+          'Shareable link: https://streakofficial.com/r/?ref=' + code +
+          (campaign ? '&campaign=' + campaign : '');
         setOpenAppHref();
 
         track('view');
